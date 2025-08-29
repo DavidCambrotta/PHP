@@ -1,0 +1,32 @@
+@'
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Dependencies
+vendor/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Logs / caches / runtime
+*.log
+.cache/
+tmp/
+storage/
+coverage/
+
+# PHPUnit / PHP tools
+.phpunit.result.cache
+.php-cs-fixer.cache
+
+# Node (if you add a frontend later)
+node_modules/
+dist/
+'@ | Set-Content -NoNewline .gitignore
