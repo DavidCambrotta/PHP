@@ -1,0 +1,29 @@
+# Normalize line endings across platforms
+* text=auto
+
+# Use LF for source files in the repo
+*.php   text eol=lf
+*.html  text eol=lf
+*.css   text eol=lf
+*.js    text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.md    text eol=lf
+
+# Keep Windows cmd scripts with CRLF
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# Binary files (no line ending normalization)
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+
+# Don’t include these in `git archive`
+.gitattributes export-ignore
+.gitignore     export-ignore
+.editorconfig  export-ignore
