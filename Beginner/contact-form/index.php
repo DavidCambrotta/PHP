@@ -14,8 +14,19 @@ if (empty($_SESSION['csrf_token'])) {
  * Helpers
  */
 function h(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
-function str_len(string $s): int { return mb_strlen($s, 'UTF-8'); }
-
+//function str_len(string $s): int { return mb_strlen($s, 'UTF-8'); }
+function str_len(string $s): int {
+    if (function_exists('mb_strlen')) {
+        return mb_strlen($s, 'UTF-8');
+    }
+    // If intl is available, this counts grapheme clusters (emoji, accents)
+    if (function_exists('grapheme_strlen')) {
+        $len = grapheme_strlen($s);
+        if ($len !== false) return $len;
+    }
+    // Last-resort byte length (fine for plain ASCII names)
+    return strlen($s);
+}
 /**
  * State for this request
  */
