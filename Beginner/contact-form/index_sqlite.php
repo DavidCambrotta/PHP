@@ -3,9 +3,6 @@ declare(strict_types=1);
 session_start();
 require __DIR__ . '/db.php';
 
-$name = $email = $subject = $message = '';
-$errors = [];
-
 /** CSRF boot */
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -27,14 +24,6 @@ $warningMessage = '';
 
 /** Handle POST */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-    $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-    $ts = date('Y-m-d H:i:s');
-    
     $postedToken = $_POST['csrf'] ?? '';
     $honeypot    = trim((string)($_POST['website'] ?? ''));
 
@@ -73,11 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (str_len($old['message']) < 10) $errors['message'] = 'Message must be at least 10 characters.';
     elseif (str_len($old['message']) > 2000)$errors['message'] = 'Message must be at most 2000 characters.';
 
-    // If valid: insert into SQLite/MySQL
+    // If valid: insert into SQLite
     if (!$errors) {
         try {
             $pdo = db();
-            /* this is SQlite
             $stmt = $pdo->prepare("
                 INSERT INTO submissions (created_at, ip, name, email, subject, message, ua, status)
                 VALUES (:created_at, :ip, :name, :email, :subject, :message, :ua, 'new')
@@ -91,23 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':message'    => $old['message'],
                 ':ua'         => $_SERVER['HTTP_USER_AGENT'] ?? '',
             ]);
-            */
-            //this is mysql
-            $stmt = db()->prepare("
-                INSERT INTO submissions
-                (created_at, ip, name, email, subject, message, ua, status)
-                VALUES (?,?,?,?,?,?,?,?)
-                ");
-            $stmt->execute([
-                $ts,
-                $ip,
-                $name,
-                $email,
-                $subject,
-                $message,
-                $ua,
-                'new',
-            ]);
+
             $successMessage = 'Thanks! Your message has been received.';
             $_SESSION['last_submit'] = $now;
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
