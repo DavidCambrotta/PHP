@@ -1,5 +1,6 @@
 <?php
-require 'db.php';
+//require 'db.php';
+require __DIR__ . '/db.php';
 
 $name = $message = '';
 $errors = [];
